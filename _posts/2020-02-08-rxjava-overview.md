@@ -32,7 +32,7 @@ RxJava가 비동기 작성에 최선인가?
 
 2.라이브러리 vs 원론
 
-RxJava와 Coroutine은 비동기처리를 하기 위한 도구라는 점은 같으나, 근본적으로 비교할 수 있는 대상은 아니라고 생각한다. Rx는 [마이크로소프트](https://docs.microsoft.com/en-us/previous-versions/dotnet/reactive-extensions/hh242985(v=vs.103)?redirectedfrom=MSDN)에서 더 복잡한 요구사항을 처리해야하는 클라이언트를 위해 옵저버 패턴 + LINQ 스타일 문법을 적용하여 만든 라이브러리고, 이를 JVM 계열로 Netflix Tech Team이 옮긴 것이 RxJava이다.
+RxJava와 Coroutine은 비동기처리를 하기 위한 도구라는 점은 같으나, 근본적으로 비교할 수 있는 대상은 아니라고 생각한다. Rx는 [마이크로소프트](https://docs.microsoft.com/en-us/previous-versions/dotnet/reactive-extensions/hh242985(v=vs.103)?redirectedfrom=MSDN)에서 더 복잡한 요구사항을 처리해야하는 클라이언트를 위해 옵저버 패턴 + LINQ 스타일 문법을 적용하여 만든 라이브러리로, 이를 JVM 계열로 Netflix Tech Team이 옮긴 것이 RxJava이다.
 
 이에 반해 [Coroutine](https://ko.wikipedia.org/wiki/%EC%BD%94%EB%A3%A8%ED%8B%B4)은 루틴의 일종으로서, 서브 루틴과 메인 루틴의 경계가 모호한, 서로가 서로를 호출할 수 있는 루틴들의 상호 연계를 말하는 것으로 해당 개념은 1958년부터 존재했다. 따라서 코루틴은 안드로이드에서만 누릴 수 있는 특혜는 아닌 것이다. 실제로 필자는 유니티에서 코루틴을 사용해본 경험이 있다.
 
@@ -56,16 +56,10 @@ Rx의 컨셉은 `데이터 스트림`과 `구독`, `데이터 변경`이다.
 | Completable | item의 방출없이 오직 해당 성공과 에러를 표시만 하는 데이터 스트림이다. |
 
 
-## transform (변환 오퍼레이터)
+## Transform (변환 오퍼레이터)
+Map / ConcatMap / FlatMap / SwitchMap / GroupBy / Scan / Buffer / Window
 
-| 오퍼레이터 | 기능 |
-| :---: | :---: |
-| Buffer | Observable의 item들을 일정 주기를 기점으로 bundle에 담아 한번에 배출합니다. | 
-| FlatMap | Observable의 item 하나하나를 Observable로 감싼 후, 배출한다.|
-| GroupBy | 기존의 Observable을 key에 의해 재조직된 Obeservable들로 묶어 배출한다. |
-| Map | Observable의 item에 사용자가 정의한 function을 적용하여 배출한다. |
-| Scan | 이전에 방출된 값과 다음의 item을 같이 function에 전달한다. |
-| Window | 일정 주기를 기점으로 Observable의 item들을 나누어 Observable window에 담고, 해당 window를 한 번에 배출합니다. |
+[RxJava - Transfrom Operator편](./2020-02-09-rxjava-transform.md)
 
 ## 추후 업데이트
 - create (생성 오퍼레이터)
