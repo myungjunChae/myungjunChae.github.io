@@ -1,50 +1,147 @@
 ---
-title: "RxJava Transfrom Operator편"
+title: "RxJava - Transfrom Operator편"
 date: 2020-02-09 13:54:00 -0400
 categories: android rxjava
 ---
 # Transform Operator
 변경 오퍼레이터는 RxJava의 오퍼레이터들 중에서 활용도가 가장 높다고 생각한다. 본 오퍼레이터들은 중첩된 비동기를 하나의 스트림으로 쉽게 구현할 수 있게 해주며, 다양한 방식으로 데이터를 조작할 수 있게한다.  
 
-### Buffer
+다양한 데이터 스트림(reactive source)가 존재하지만 여기서는 가장 근본이 되는 Observable로 치환하여 말하겠다.
+
+# Map
+✅Flowable, ✅Observable, ✅Maybe, ✅Single, ❌Completable
+
+각 item에 함수를 적용하여 방출한다.
+
+```
+Observable.range(0,5)
+    .map{x -> x*x}
+    .subscribe{println(it)}
+
+// 0
+// 1
+// 4
+// 9
+// 16 
+```
+
+# ConcatMap
+✅Flowable, ✅Observable, ✅Maybe, ❌Single, ❌Completable
+
+ConcatMap은 외부 Observable의 데이터를 순차적으로 처리할 수 있도록 보장한다. 내부 Observable이 먼저 결과를 방출할 수 있어도 방출하지 않고 기다린다.
+
+```
+Observable.range(0, 5)
+    .concatMap { i  ->
+        val delay = Math.round(Math.random() * 2)
+        Observable.timer(delay, TimeUnit.SECONDS)
+            .map { i }
+    }
+    .blockingSubscribe { println(it) }
+
+// 0
+// 1
+// 2
+// 3
+// 4
+```
+
+# FlatMap
+✅Flowable, ✅Observable, ✅Maybe, ✅Single, ❌Completable
+
+FlatMap은 ConcatMap과 다르게 외부 Observable의 방출 순서와 상관없이 먼저 처리된 내부 Observable 방출한다.(인터리빙)
+```
+Observable.range(0, 5)
+        .flatMap { i ->
+            val delay = Math.round(Math.random() * 2)
+            Observable.timer(delay, TimeUnit.SECONDS)
+                .map { i }
+        }
+        .blockingSubscribe { println(it) }
+    
+// 0
+// 2
+// 4
+// 1
+// 3
+```
+
+# SwitchMap
 ✅Flowable, ✅Observable, ❌Maybe, ❌Single, ❌Completable
 
-Observable의 item들을 일정 주기를 기점으로 bundle에 담아 한번에 배출합니다.
-> periodically gather items from an Observable into bundles and emit these bundles rather than emitting the items one at a time
+SwitchMap은 ConcatMap과 FlatMap과는 다른 동작을 보인다. 내부 Observable의 방출이 끝나지 않았는데 외부 Observable이 방출을 해야한다면, 해당 내부 Observable의 동작을 중지한다.
 
+```
+Observable.range(0, 5)
+    .switchMap {i ->
+        Observable.timer(1, TimeUnit.SECONDS)
+            .map { i }
+    }
+    .blockingSubscribe { println(it) }
+
+// 4
+```
+
+# GroupBy
+✅Flowable, ✅Observable, ❌Maybe, ❌Single, ❌Completable
+
+GroupBy는 사용자가 정한 key를 기준으로 Observable을 나눠 방출한다.
+```
+  Observable.range(0,10)
+        .groupBy ({it%2})
+        .concatMapSingle{it.toList()}
+        .subscribe{println(it)}
+
+// [0, 2, 4, 6, 8]
+// [1, 3, 5, 7, 9]
+```
+
+# Scan
+Scan은 이전에 방출된 값을 연속적으로 받아 function을 적용하여 방출한다.
+✅Flowable, ✅Observable, ❌Maybe, ❌Single, ❌Completable
+
+```
+Observable.just("b","c","d")
+    .scan("a", {x,y -> x+y})
+    .subscribe{println(it)}
+
+// a
+// ab
+// abc
+// abcd
+```
+
+# Buffer
+✅Flowable, ✅Observable, ❌Maybe, ❌Single, ❌Completable
+
+방출에 대한 임계를 정하고, 넘으면 List<T>형태로 방출한다. 
 ```
 val bufferObservable = Observable.range(0, 10)
     .buffer(2)
-    .subscribe(
-        { println("Next : ${it}") },
-        { println("error") },
-        { println("finish") }
-    )
+    .subscribe{ println(it) }
 
-// Next : [2, 3]
-// Next : [4, 5]
-// Next : [6, 7]
-// Next : [8, 9]
-// finish
+// [0, 1]
+// [2, 3]
+// [4, 5]
+// [6, 7]
+// [8, 9]
+```
+
+# Window
+✅Flowable, ✅Observable, ❌Maybe, ❌Single, ❌Completable
+
+방출에 대한 임계값을 정하는 것은 Buffer와 똑같으나 각각의 window를 Observable로 방출한다.
 
 ```
-### FlatMap
-> transform the items emitted by an Observable into Observables, then flatten the emissions from those into a single Observable
+Observable.range(0, 10)
+    .window(2)
+    .flatMapSingle { it.toList() }
+    .subscribe { println(it) }
+    
+// [0, 1]
+// [2, 3]
+// [4, 5]
+// [6, 7]
+// [8, 9]
 
-### GroupBy
-> divide an Observable into a set of Observables that each emit a different group of items from the original Observable, organized by key
-
-### Map
-> transform the items emitted by an Observable by applying a function to each item
-
-### Scan
-> apply a function to each item emitted by an Observable, sequentially, and emit each successive value
-
-### Winodw 
-> periodically subdivide items from an Observable into Observable windows and emit these windows rather than emitting the items one at a time
-
-| FlatMap | Observable에서 배출된 item 하나하나를 Observable로 감싸고, 각 item을 다시 한번 배출합니다.|
-| GroupBy | 기존의 Observable을 key에 의해 재조직된 Obeservable들로 묶어 배출한다. |
-| Map | 각 item에 사용자가 정의한 function을 적용하여 배출한다. |
-| Scan | 이전에 방출된 값과 다음의 item을 같이 function에 전달한다. |
-| Window | 일정 주기를 기점으로 Observable의 item들을 나누어 Observable window에 담고, 해당 window를 한 번에 배출합니다. |
+```
