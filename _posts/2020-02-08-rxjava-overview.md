@@ -1,5 +1,5 @@
 ---
-title: "Rxjava Overview편"
+title: "RxJava Overview편"
 date: 2020-02-08 13:23:00 -0400
 categories: android rxjava
 ---
@@ -60,7 +60,7 @@ Rx의 컨셉은 `데이터 스트림`과 `구독`, `데이터 변경`이다.
 transform (변환 오퍼레이터)
 | 오퍼레이터 | 기능 |
 | :---: | :---: |
-| Buffer | Observable의 item들을 일정 주기를 기점으로 bundle에 담아 한번에 배출합니다.
+| Buffer | Observable의 item들을 일정 주기를 기점으로 bundle에 담아 한번에 배출합니다. | 
 | FlatMap | Observable에서 배출된 item 하나하나를 Observable로 감싸고, 각 item을 다시 한번 배출합니다.|
 | GroupBy | 기존의 Observable을 key에 의해 재조직된 Obeservable들로 묶어 배출한다. |
 | Map | 각 item에 사용자가 정의한 function을 적용하여 배출한다. |
