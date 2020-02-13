@@ -265,9 +265,8 @@ val stream : Observable<String> = Observable.create{
         it.onComplete()
 }
 
-stream.subscribeOn(Schedulers.io())
-        .timeout(1, TimeUnit.SECONDS)
-        .blockingSubscribe(
+stream.timeout(1, TimeUnit.SECONDS)
+        .subscribe(
                 {println(it)},
                 {err->println(err)}
         )
