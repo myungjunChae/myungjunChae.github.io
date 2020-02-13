@@ -177,6 +177,7 @@ Observable.intervalRange(1,5,1,1,TimeUnit.SECONDS)
 // C
 // D
 ```
+<br>
 
 # Skip & SkipLast
 ---
@@ -187,6 +188,7 @@ Observable.intervalRange(1,5,1,1,TimeUnit.SECONDS)
 ```
 // 생략
 ```
+<br>
 
 # Take & TakeLast
 ---
@@ -197,11 +199,14 @@ Observable.intervalRange(1,5,1,1,TimeUnit.SECONDS)
 ```
 // 생략
 ```
+<br>
 
 # throttleFirst & throttleLast
 ✅Flowable, ✅Observable, ❌Maybe, ❌Single, ❌Completable
 
 > throttleLast와 sample의 차이는? 
+
+일정 주기 중의 첫 item (first), 마지막 item (last)만 방출한다.
 
 ```
 val stream : Observable<String> = Observable.create{
@@ -234,7 +239,8 @@ stream.subscribeOn(Schedulers.io())
 //A
 //D
 ```
-일정 주기 중의 첫 item (first), 마지막 item (last)만 방출한다.
+<br>
+
 
 
 # timeout
