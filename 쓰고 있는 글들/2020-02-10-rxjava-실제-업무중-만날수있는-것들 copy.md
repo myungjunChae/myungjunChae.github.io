@@ -9,10 +9,8 @@ categories: android rxjava
 
 # 백그라운드 작업과 동시성 (scheduler 사용하기)
 ---
-보통 긴 I/O 작업은 백그라운드 스레드에서 작업하고 해당 결과를 메인스레드(UI 쓰레드)에 전달한다. 이전에 AsyncTasks에서 처리될 수 있었던 기능을 수행한다고 생각하면 된다. RxJava는 이러한 
-
-일부러 오래걸리게 작업한 코드 내용 찾을 것
-
+보통 긴 I/O 작업은 백그라운드 스레드에서 작업한 후, 해당 결과를 메인스레드(UI 쓰레드)에 전달한다. 
+ 
 The long operation is simulated by a blocking Thread.sleep call (since this is done in a background thread, our UI is never interrupted).
 
 To really see this example shine. Hit the button multiple times and see how the button click (which is a UI operation) is never blocked because the long operation only runs in the background.
